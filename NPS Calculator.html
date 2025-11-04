@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PIPE WEIGHT CALCULATOR • SHALCO</title>
+  <link rel="icon" href="https://www.shalco.com/favicon.ico">
+  <style>
+    :root{
+      --bg:#ffffff;
+      --card:#ffffff;
+      --ink:#0f172a;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --primary:#0ea5e9;
+      --teal:#14b8a6;
+      --ring: rgba(14,165,233,.22);
+    }
+    *,*:before,*:after{box-sizing:border-box}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--ink);line-height:1.45;text-transform:uppercase}
+    a{color:var(--primary);text-decoration:none}
+    header.brand{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+    .brand-inner{max-width:900px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;gap:14px}
+    .brand img{height:36px;width:auto;display:block}
+    .brand h1{font-size:18px;margin:0;color:var(--ink);font-weight:800}
+    .sub{font-size:12px;color:var(--muted);margin-left:auto}
+    .wrap{max-width:900px;margin:24px auto;padding:0 16px}
+    .card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input,select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#f7f8fa;outline:none;font-size:14px;color:var(--ink);transition:.2s border-color,.2s box-shadow,.2s background}
+    input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 4px var(--ring);background:#fff}
+    .row{display:grid;grid-template-columns:repeat(12,1fr);gap:12px;margin-bottom:12px}
+    .col-3{grid-column:span 3}.col-4{grid-column:span 4}.col-6{grid-column:span 6}.col-12{grid-column:span 12}
+    .results{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:10px}
+    .metric{border:1px solid var(--border);background:#f7f8fa;border-radius:10px;padding:12px}
+    .metric .big{font-size:22px;font-weight:900;text-transform:none}
+    @media(max-width:900px){.row{grid-template-columns:1fr}.results{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="brand">
+    <div class="brand-inner">
+      <a href="https://www.shalco.com" target="_blank" rel="noopener">
+        <img alt="SHALCO LOGO" src="https://cdn.prod.website-files.com/6505f22480671c09d594fa34/66ffde48df5764d1d6274c0a_Logo%20Primary%2002%20G.svg">
+      </a>
+      <h1>PIPE WEIGHT CALCULATOR</h1>
+</div>
+  </header>
+
+  <div class="wrap">
+    <section class="card" id="card">
+      <div class="row">
+        <div class="col-6">
+          <label>NOMINAL PIPE SIZE</label>
+          <select id="size"></select>
+        </div>
+        <div class="col-6">
+          <label>NOMINAL WALL THICKNESS</label>
+          <select id="schedule"></select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-3">
+          <label>DENSITY (KG/M³)</label>
+          <input id="density" type="number" step="1" value="7930">
+        </div>
+      </div>
+
+      <div class="results">
+        <div class="metric"><div>OUTSIDE DIAMETER (MM)</div><div class="big" id="odOut">–</div></div>
+        <div class="metric"><div>WALL THICKNESS (MM)</div><div class="big" id="wtOut">–</div></div>
+        <div class="metric"><div>INSIDE DIAMETER (MM)</div><div class="big" id="idOut">–</div></div>
+        <div class="metric"><div>WEIGHT (KG/M)</div><div class="big" id="wpmOut">–</div></div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const SCHEDULES = ["SCH 5s","SCH 10s","SCH 10","SCH 20","SCH 30","SCH 40s","SCH STD","SCH 40","SCH 60","SCH 80s","SCH XS","SCH 80","SCH 100","SCH 120","SCH 140","SCH 160","SCH XXS"];
+    let PIPE_DATA = [{"nps": "1/8", "od_mm": 10.3, "t": {"SCH 10s": 1.24, "SCH 40s": 1.73, "SCH STD": 1.73, "SCH 40": 1.73, "SCH 80s": 2.41, "SCH XS": 2.41, "SCH 80": 2.41}}, {"nps": "1/4", "od_mm": 13.7, "t": {"SCH 10s": 1.65, "SCH 40s": 2.24, "SCH STD": 2.24, "SCH 40": 2.24, "SCH 80s": 3.02, "SCH XS": 3.02, "SCH 80": 3.02}}, {"nps": "3/8", "od_mm": 17.1, "t": {"SCH 10s": 1.65, "SCH 40s": 2.31, "SCH STD": 2.31, "SCH 40": 2.31, "SCH 80s": 3.2, "SCH XS": 3.2, "SCH 80": 3.2}}, {"nps": "1/2", "od_mm": 21.3, "t": {"SCH 5s": 1.65, "SCH 10s": 2.11, "SCH 40s": 2.77, "SCH STD": 2.77, "SCH 40": 2.77, "SCH 80s": 3.73, "SCH XS": 3.73, "SCH 80": 3.73, "SCH 160": 4.78, "SCH XXS": 7.47}}, {"nps": "3/4", "od_mm": 26.7, "t": {"SCH 5s": 1.65, "SCH 10s": 2.11, "SCH 40s": 2.87, "SCH STD": 2.87, "SCH 40": 2.87, "SCH 80s": 3.91, "SCH XS": 3.91, "SCH 80": 3.91, "SCH 160": 5.56, "SCH XXS": 7.82}}, {"nps": "1", "od_mm": 33.4, "t": {"SCH 5s": 1.65, "SCH 10s": 2.77, "SCH 40s": 3.38, "SCH STD": 3.38, "SCH 40": 3.38, "SCH 80s": 4.55, "SCH XS": 4.55, "SCH 80": 4.55, "SCH 160": 6.35, "SCH XXS": 9.09}}, {"nps": "1 1/4", "od_mm": 42.2, "t": {"SCH 5s": 1.65, "SCH 10s": 2.77, "SCH 40s": 3.56, "SCH STD": 3.56, "SCH 40": 3.56, "SCH 80s": 4.85, "SCH XS": 4.85, "SCH 80": 4.85, "SCH 160": 6.35, "SCH XXS": 9.7}}, {"nps": "1 1/2", "od_mm": 48.3, "t": {"SCH 5s": 1.65, "SCH 10s": 2.77, "SCH 40s": 3.68, "SCH STD": 3.68, "SCH 40": 3.68, "SCH 80s": 5.08, "SCH XS": 5.08, "SCH 80": 5.08, "SCH 160": 7.14, "SCH XXS": 10.15}}, {"nps": "2", "od_mm": 60.3, "t": {"SCH 5s": 1.65, "SCH 10s": 2.77, "SCH 40s": 3.91, "SCH STD": 3.91, "SCH 40": 3.91, "SCH 80s": 5.54, "SCH XS": 5.54, "SCH 80": 5.54, "SCH 160": 8.74, "SCH XXS": 11.07}}, {"nps": "2 1/2", "od_mm": 73.0, "t": {"SCH 5s": 2.11, "SCH 10s": 3.05, "SCH 40s": 5.16, "SCH STD": 5.16, "SCH 40": 5.16, "SCH 80s": 7.01, "SCH XS": 7.01, "SCH 80": 7.01, "SCH 160": 9.53, "SCH XXS": 14.02}}, {"nps": "3", "od_mm": 88.9, "t": {"SCH 5s": 2.11, "SCH 10s": 3.05, "SCH 40s": 5.49, "SCH STD": 5.49, "SCH 40": 5.49, "SCH 80s": 7.62, "SCH XS": 7.62, "SCH 80": 7.62, "SCH 160": 11.13, "SCH XXS": 15.24}}, {"nps": "3 1/2", "od_mm": 101.6, "t": {"SCH 5s": 2.11, "SCH 10s": 3.05, "SCH 40s": 5.74, "SCH STD": 5.74, "SCH 40": 5.74, "SCH 80s": 8.08, "SCH XS": 8.08, "SCH 80": 8.08}}, {"nps": "4", "od_mm": 114.3, "t": {"SCH 5s": 2.11, "SCH 10s": 3.05, "SCH 40s": 6.02, "SCH STD": 6.02, "SCH 40": 6.02, "SCH 80s": 8.56, "SCH XS": 8.56, "SCH 80": 8.56, "SCH 120": 11.13, "SCH 160": 13.49, "SCH XXS": 17.12}}, {"nps": "5", "od_mm": 141.3, "t": {"SCH 5s": 2.77, "SCH 10s": 3.4, "SCH 40s": 6.55, "SCH STD": 6.55, "SCH 40": 6.55, "SCH 80s": 9.53, "SCH XS": 9.53, "SCH 80": 9.53, "SCH 120": 12.7, "SCH 160": 15.88, "SCH XXS": 19.05}}, {"nps": "6", "od_mm": 168.3, "t": {"SCH 5s": 2.77, "SCH 10s": 3.4, "SCH 40s": 7.11, "SCH STD": 7.11, "SCH 40": 7.11, "SCH 80s": 10.97, "SCH XS": 10.97, "SCH 80": 10.97, "SCH 120": 14.27, "SCH 160": 18.26, "SCH XXS": 21.95}}, {"nps": "8", "od_mm": 219.1, "t": {"SCH 5s": 2.77, "SCH 10s": 3.76, "SCH 20": 6.35, "SCH 30": 7.04, "SCH 40s": 8.18, "SCH STD": 8.18, "SCH 40": 8.18, "SCH 60": 10.31, "SCH 80s": 12.7, "SCH XS": 12.7, "SCH 80": 12.7, "SCH 100": 15.09, "SCH 120": 18.26, "SCH 140": 20.62, "SCH 160": 23.01, "SCH XXS": 22.23}}, {"nps": "10", "od_mm": 273.0, "t": {"SCH 5s": 3.4, "SCH 10s": 4.19, "SCH 20": 6.35, "SCH 30": 7.8, "SCH 40s": 9.27, "SCH STD": 9.27, "SCH 40": 9.27, "SCH 60": 12.7, "SCH 80s": 12.7, "SCH XS": 12.7, "SCH 80": 15.09, "SCH 100": 18.26, "SCH 120": 21.44, "SCH 140": 25.4, "SCH 160": 28.58, "SCH XXS": 25.4}}, {"nps": "12", "od_mm": 323.9, "t": {"SCH 5s": 3.96, "SCH 10s": 4.57, "SCH 20": 6.35, "SCH 30": 8.38, "SCH 40s": 9.53, "SCH STD": 9.53, "SCH 40": 10.31, "SCH 60": 14.27, "SCH 80s": 12.7, "SCH XS": 12.7, "SCH 80": 17.48, "SCH 100": 21.44, "SCH 120": 25.4, "SCH 140": 28.58, "SCH 160": 33.32, "SCH XXS": 25.4}}, {"nps": "14", "od_mm": 355.6, "t": {"SCH 5s": 3.96, "SCH 10s": 4.78, "SCH 10": 6.35, "SCH 20": 7.92, "SCH 30": 9.53, "SCH STD": 9.53, "SCH 40": 11.13, "SCH 60": 15.09, "SCH XS": 12.7, "SCH 80": 19.05, "SCH 100": 23.83, "SCH 120": 27.79, "SCH 140": 31.75, "SCH 160": 35.71}}, {"nps": "16", "od_mm": 406.4, "t": {"SCH 5s": 4.19, "SCH 10s": 4.78, "SCH 10": 6.35, "SCH 20": 7.92, "SCH 30": 9.53, "SCH STD": 9.53, "SCH 40": 12.7, "SCH XS": 12.7, "SCH 80": 21.44, "SCH 100": 26.19, "SCH 120": 30.96, "SCH 140": 36.53, "SCH 160": 40.49}}, {"nps": "18", "od_mm": 457.2, "t": {"SCH 5s": 4.19, "SCH 10s": 4.78, "SCH 10": 6.35, "SCH 20": 7.92, "SCH 30": 11.13, "SCH STD": 9.53, "SCH 40": 14.27, "SCH 60": 19.05, "SCH XS": 12.7, "SCH 80": 23.83, "SCH 100": 29.36, "SCH 120": 34.93, "SCH 140": 39.67, "SCH 160": 45.24}}, {"nps": "20", "od_mm": 508.0, "t": {"SCH 5s": 4.78, "SCH 10s": 5.54, "SCH 10": 6.35, "SCH 20": 9.53, "SCH 30": 12.7, "SCH STD": 9.53, "SCH 40": 15.09, "SCH 60": 20.62, "SCH XS": 12.7, "SCH 80": 26.19, "SCH 100": 32.54, "SCH 120": 38.1, "SCH 140": 44.45, "SCH 160": 50.01}}, {"nps": "22", "od_mm": 558.8, "t": {"SCH 5s": 4.78, "SCH 10s": 5.54, "SCH 10": 6.35, "SCH 20": 9.53, "SCH 30": 12.7, "SCH STD": 9.53, "SCH 60": 22.23, "SCH XS": 12.7, "SCH 80": 28.58, "SCH 100": 34.93, "SCH 120": 41.28, "SCH 140": 47.63, "SCH 160": 53.98}}, {"nps": "24", "od_mm": 609.6, "t": {"SCH 5s": 5.54, "SCH 10s": 6.35, "SCH 10": 6.35, "SCH 20": 9.53, "SCH 30": 14.27, "SCH STD": 9.53, "SCH 40": 17.48, "SCH 60": 24.61, "SCH XS": 12.7, "SCH 80": 30.96, "SCH 100": 38.89, "SCH 120": 46.02, "SCH 140": 52.37, "SCH 160": 59.54}}, {"nps": "26", "od_mm": 660.4, "t": {"SCH 10": 7.92, "SCH 20": 12.7, "SCH STD": 9.53, "SCH XS": 12.7}}, {"nps": "28", "od_mm": 711.2, "t": {"SCH 10": 7.92, "SCH 20": 12.7, "SCH 30": 15.88, "SCH STD": 9.53, "SCH XS": 12.7}}, {"nps": "30", "od_mm": 762.0, "t": {"SCH 5s": 6.35, "SCH 10s": 7.92, "SCH 10": 7.92, "SCH 20": 12.7, "SCH 30": 15.88, "SCH STD": 9.53, "SCH XS": 12.7}}, {"nps": "32", "od_mm": 812.8, "t": {"SCH 10": 7.92, "SCH 20": 12.7, "SCH 30": 15.88, "SCH STD": 9.53, "SCH 40": 17.48, "SCH XS": 12.7}}, {"nps": "34", "od_mm": 863.6, "t": {"SCH 10": 7.92, "SCH 20": 12.7, "SCH 30": 15.88, "SCH STD": 9.53, "SCH 40": 17.48, "SCH XS": 12.7}}, {"nps": "36", "od_mm": 914.4, "t": {"SCH 10": 7.92, "SCH 20": 12.7, "SCH 30": 15.88, "SCH STD": 9.53, "SCH 40": 19.05, "SCH XS": 12.7}}, {"nps": "38", "od_mm": 965.2, "t": {"SCH STD": 9.53, "SCH XS": 12.7}}, {"nps": "40", "od_mm": 1016.0, "t": {"SCH 40s": 9.53, "SCH 40": 12.7}}, {"nps": "42", "od_mm": 1066.8, "t": {"SCH 20": 12.7, "SCH 30": 15.88, "SCH STD": 9.53, "SCH 40": 19.05, "SCH XS": 12.7}}, {"nps": "44", "od_mm": 1117.6, "t": {"SCH STD": 9.53, "SCH XS": 12.7}}, {"nps": "46", "od_mm": 1168.4, "t": {"SCH STD": 9.53, "SCH XS": 12.7}}, {"nps": "48", "od_mm": 1219.2, "t": {"SCH STD": 9.53, "SCH 80s": 12.7}}, {"nps": "50", "od_mm": 1270.0, "t": {}}, {"nps": "52", "od_mm": 1320.8, "t": {}}, {"nps": "54", "od_mm": 1371.6, "t": {}}, {"nps": "56", "od_mm": 1422.4, "t": {}}, {"nps": "58", "od_mm": 1473.2, "t": {}}, {"nps": "60", "od_mm": 1524.0, "t": {}}];
+
+    const sizeSel = document.getElementById('size');
+    const schedSel = document.getElementById('schedule');
+    const densityInp = document.getElementById('density');
+    const odOut = document.getElementById('odOut');
+    const wtOut = document.getElementById('wtOut');
+    const idOut = document.getElementById('idOut');
+    const wpmOut = document.getElementById('wpmOut');
+
+    function buildSizeOptions(){
+      sizeSel.innerHTML = '';
+      PIPE_DATA.forEach(r => {
+        const o = document.createElement('option'); o.value = r.nps; o.textContent = r.nps; sizeSel.appendChild(o);
+      });
+      if (PIPE_DATA.length) sizeSel.value = PIPE_DATA[0].nps;
+      buildScheduleOptions(); compute();
+    }
+    function getSelectedRecord(){
+      const nps = sizeSel.value; return PIPE_DATA.find(r => r.nps === nps);
+    }
+    function buildScheduleOptions(){
+      const rec = getSelectedRecord(); schedSel.innerHTML='';
+      const available = rec ? SCHEDULES.filter(s => rec.t && rec.t[s] != null) : [];
+      const rest = SCHEDULES.filter(s => !available.includes(s));
+      const list = [...available, ...rest];
+      list.forEach(s => {
+        const o = document.createElement('option'); o.value = s; o.textContent = available.includes(s) ? s + " ✓" : s; schedSel.appendChild(o);
+      });
+      if (list.length) schedSel.value = list[0];
+    }
+    function compute(){
+      const rec = getSelectedRecord();
+      if (!rec) { odOut.textContent = wtOut.textContent = idOut.textContent = wpmOut.textContent = '–'; return; }
+      const od = Number(rec.od_mm);
+      const sched = schedSel.value.replace(' ✓','');
+      const t = rec.t ? Number(rec.t[sched]) : NaN;
+      const dens = Number(densityInp.value || 7930);
+      odOut.textContent = isFinite(od) ? od.toFixed(2) : '–';
+      wtOut.textContent = isFinite(t) ? t.toFixed(2) : '–';
+      if (!isFinite(od) || !isFinite(t)) { idOut.textContent = '–'; wpmOut.textContent = '–'; return; }
+      const ID = od - 2*t;
+      const area_mm2 = Math.PI/4 * (od*od - ID*ID);
+      const wpm = area_mm2 * 1e-6 * dens;
+      idOut.textContent = ID.toFixed(2);
+      wpmOut.textContent = wpm.toFixed(3);
+    }
+
+    sizeSel.addEventListener('change', () => { buildScheduleOptions(); compute(); });
+    schedSel.addEventListener('change', compute);
+    densityInp.addEventListener('input', compute);
+
+    // init
+    buildSizeOptions(); compute();
+  </script>
+</body>
+</html>
